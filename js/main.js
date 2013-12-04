@@ -125,17 +125,18 @@ function PokemonCtrl($scope){
     ];
     $scope.getPokemon = function(dex){
         var pkmn = pokemonData[dex]
-        return {
+        var s = {
+            hp : {name : 'Hp', evs : 0, ivs : 0, id : 'hp', total : 0},
+            atk : {name : 'Attack', evs : 0, ivs : 0, id : 'atk', total : 0},
+            def : {name : 'Defense', evs : 0, ivs : 0, id : 'def', total : 0},
+            spa : {name : 'Special Attack', evs : 0, ivs : 0, id : 'spa', total : 0},
+            spd : {name : 'Special Defense', evs : 0, ivs : 0, id : 'spd', total : 0},
+            spe : {name : 'Speed', evs : 0, ivs : 0, id : 'spe', total : 0}
+            };
+        var ret = {
             pokemon : pkmn,
             nickname : "Bob Barker",
-            stats : {
-                hp : {name : 'Hp', evs : 0, ivs : 0, id : 'hp', total : $scope.calcStat(pkmn.baseStats.hp,0,0,1,true)},
-                atk : {name : 'Attack', evs : 0, ivs : 0, id : 'atk', total : $scope.calcStat(pkmn.baseStats.atk,0,0,1)},
-                def : {name : 'Defense', evs : 0, ivs : 0, id : 'def', total : $scope.calcStat(pkmn.baseStats.def,0,0,1)},
-                spa : {name : 'Special Attack', evs : 0, ivs : 0, id : 'spa', total : $scope.calcStat(pkmn.baseStats.spa,0,0,1)},
-                spd : {name : 'Special Defense', evs : 0, ivs : 0, id : 'spd', total : $scope.calcStat(pkmn.baseStats.spd,0,0,1)},
-                spe : {name : 'Speed', evs : 0, ivs : 0, id : 'spe', total : $scope.calcStat(pkmn.baseStats.spe,0,0,1)}
-            },
+            stats : s,
             item : 'none',
             moves : [pkmn.moves[0],pkmn.moves[1],pkmn.moves[2],pkmn.moves[3]],
             ability : pkmn.abilities[0],
@@ -146,6 +147,14 @@ function PokemonCtrl($scope){
             id : $scope.team.length,
             active : true
         }
+        s.hp.total = $scope.calcStat(ret,'hp');
+        s.atk.total = $scope.calcStat(ret,'atk');
+        s.def.total = $scope.calcStat(ret,'def');
+        s.spa.total = $scope.calcStat(ret,'spa');
+        s.spd.total = $scope.calcStat(ret,'spd');
+        s.spe.total = $scope.calcStat(ret,'spe');
+        return ret;
+            
     }
     $scope.getBaseStat = function(pkmn,stat){
         return pkmn.pokemon.baseStats[stat]
@@ -156,26 +165,26 @@ function PokemonCtrl($scope){
     }
     $scope.addEvs = function(){
         var pkmn = {};
-        var statId = $scope.evOptions.stat;
-        var total = $scope.calcEvs(evOptions);
+        var statId = $scope.evOptions.stat.id;
+        var total = $scope.calcEvs($scope.evOptions);
         for(var i = 0; i < $scope.team.length; i++){
             pkmn = $scope.team[i];
-            pkmn.stats[statId].ev = parseInt(pkmn.stats[statId].ev,10) + total;
+            console.log(statId)
+            pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + total;
             $scope.updateStat(pkmn,statId);
         }
     }
     $scope.updateStat = function(pkmn,statId){
-        //@TODO: FINISH REWRITE OF STAT UPDATES
-        pkmn.stats[statId].ev = parseInt(pkmn.stats[statId].ev,10);
-        pkmn.stats[statId].iv = parseInt(pkmn.stats[statId].iv,10);
-        if(isNaN(pkmn.stats[statId].ev) || pkmn.stats[statId].ev < 0){
-            pkmn.stats[statId].ev = 0;
-        }else if(pkmn.stats[statId].ev > 252) pkmn.stats[statId].ev = 252;
+        pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10);
+        pkmn.stats[statId].ivs = parseInt(pkmn.stats[statId].ivs,10);
+        if(isNaN(pkmn.stats[statId].evs) || pkmn.stats[statId].evs < 0){
+            pkmn.stats[statId].evs = 0;
+        }else if(pkmn.stats[statId].evs > 252) pkmn.stats[statId].evs = 252;
 
-        if(isNaN(pkmn.stats[statId].iv) || pkmn.stats[statId].iv < 0){
-            pkmn.stats[statId].iv = 0;
-        }else if(pkmn.stats[statId].iv > 31) pkmn.stats[statId].iv = 31;
-        pkmn.stats[statId].total = $scope.calcTotal(pkmn,statId);
+        if(isNaN(pkmn.stats[statId].ivs) || pkmn.stats[statId].ivs < 0){
+            pkmn.stats[statId].ivs = 0;
+        }else if(pkmn.stats[statId].ivs > 31) pkmn.stats[statId].ivs = 31;
+        pkmn.stats[statId].total = $scope.calcStat(pkmn,statId);
     }
     $scope.calcEvs = function(evo){
         return (evo.baseEv + evo.powerItem) * evo.horde * evo.pokerus;

@@ -124,8 +124,8 @@
                   <tr ng-repeat="stat in pokemon.stats" on-finish-render="ngRepeatFinished" class="{{stat.id}}-row">
                     <td>{{stat.name}}</td>
                     <td>{{getBaseStat(pokemon,stat.id)}}</td>
-                    <td><input type="text" maxlength="3" value="{{stat.ev}}" ng-model="stat.ev" ng-change="calcTotal(pokemon,stat.id)"></td>
-                    <td><input type="text" maxlength="2" value="{{stat.iv}}" ng-model="stat.iv" ng-change="calcTotal(pokemon,stat.id)"></td>
+                    <td><input type="text" maxlength="3" value="{{stat.evs}}" ng-model="stat.evs" ng-change="updateStat(pokemon,stat.id)"></td>
+                    <td><input type="text" maxlength="2" value="{{stat.ivs}}" ng-model="stat.ivs" ng-change="updateStat(pokemon,stat.id)"></td>
                     <td>{{stat.total}}</td>
                   </tr>
               </tbody>

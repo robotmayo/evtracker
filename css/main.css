@@ -1,0 +1,89 @@
+.ev-bonus{
+    margin-top : 10px;
+    margin-bottom: 10px;
+}
+ul{
+    list-style-type: none;
+}
+.pokemon-evs li{
+    padding-left: 0;
+}
+
+.active{
+	background: #35E88E;
+}
+input{
+	width: 100%;
+}
+
+.no-pad{
+	padding-left: 0;
+}
+
+.move-label{
+	float: left;
+	margin-right : 10px;
+}
+.move-input input{
+	width : 60%;
+}
+.move-input-wrap:first-child{
+	margin-top: 5px;
+}
+.move-input-wrap{
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+.move-input-wrap select{
+	max-width: 80%;
+}
+h1{
+	margin-top: 0;
+}
+.pokemon-ev-display{
+	overflow: hidden;
+	height : 200px;
+}
+.pokemon-ev-display-img img{
+	height: 200px;
+}
+.pokemon-name{
+	margin-top: 0px;
+}
+.pokemon-nickname{
+	margin-bottom: 0px;
+	margin-top: 0;
+}
+.type{
+	height : 60px;
+	border-radius: 4px;
+	border : 2px solid rgba(0,0,0,.2);
+	padding : 3px;
+}
+
+.fairy{
+	background: pink;
+}
+.pokemon-stats input{
+	max-width: 40px;
+}
+.pokemon-display{
+	border-bottom: 1px rgba(0,0,0,.1) solid;
+	padding-top: 10px;
+}
+.pokemon-display:last-child{
+	border: none;
+}
+
+tr.boost{
+	background: rgba(255,116,98,.6);
+}
+tr.hinder{
+	background: rgba(100,198,247,.6);
+}
+
+@media (max-width: 991px) {
+	.pokemon-stats{
+		clear: both;
+	}
+}

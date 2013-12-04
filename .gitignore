@@ -1,6 +1,5 @@
 *.sublime-*
 *.txt
-data/
 img/
 csv/
 vendor/

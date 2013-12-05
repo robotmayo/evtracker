@@ -23,14 +23,8 @@ var displayStates = {
     horde : true,
     pokerus : false
 }
-var pokemonNames = []
 var pokemonData = []
-$.getJSON("data\\pokemon.json", function(json) {
-    for(var i = 0; i < json.length; i++){
-        pokemonNames.push(json[i].name)
-    }
-    pokemonData = json;
-});
+
 
 var version = "0.9"
 
@@ -94,7 +88,21 @@ app.directive('onFinishRender', function ($timeout) {
     }
 });
 
-function PokemonCtrl($scope){
+function PokemonCtrl($scope,$http){
+    $http({method: 'GET', url: 'data\\pokemon.json'}).success(function(data, status, headers, config) {
+        for(var i = 0; i < data.length; i++){
+            $scope.pokemonNames.push({name : data[i].name, dex : i});
+        }
+        $scope.pokemonNames.sort(function(a,b){
+            if(a.name > b.name) return 1;
+            return -1;
+        })
+        $scope.pokemonData = data;
+    }).error(function(data, status, headers, config) {
+
+    });
+    $scope.pokemonNames = [];
+    $scope.pokemonData;
     $scope.team = [];
     $scope.evOptions = {horde : 1, pokerus : 1, baseEv : 1, powerItem : 0, stat : {}};
     $scope.evStats = [
@@ -134,8 +142,9 @@ function PokemonCtrl($scope){
         {name : 'Serious', boost : '', hinder : '' },
         {name : 'Timid', boost : 'spe', hinder : 'atk'},
     ];
+    $scope.selectedPokemon = {}
     $scope.getPokemon = function(dex){
-        var pkmn = pokemonData[dex]
+        var pkmn = $scope.pokemonData[dex]
         var s = {
             hp : {name : 'Hp', evs : 0, ivs : 0, id : 'hp', total : 0},
             atk : {name : 'Attack', evs : 0, ivs : 0, id : 'atk', total : 0},
@@ -171,8 +180,8 @@ function PokemonCtrl($scope){
         return pkmn.pokemon.baseStats[stat]
     }
     $scope.addPokemon = function(){
-        $scope.team.push($scope.getPokemon(Math.floor(Math.random()*716)));
-        console.log($scope.team[$scope.team.length-1])
+        console.log($scope.selectedPokemon);
+        $scope.team.push($scope.getPokemon($scope.selectedPokemon.dex));
     }
     $scope.addEvs = function(){
         var pkmn = {};

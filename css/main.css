@@ -81,6 +81,10 @@ tr.boost{
 tr.hinder{
 	background: rgba(100,198,247,.6);
 }
+#pokemon-names{
+	width: 150px;
+	margin-top: 7px;
+}
 
 @media (max-width: 991px) {
 	.pokemon-stats{

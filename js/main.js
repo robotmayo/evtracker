@@ -39,34 +39,6 @@ function hasLocalStoarge(){
     }
 }
 var ls = hasLocalStoarge() ? localStorage : undefined;
-console.log(ls);
-
-function updateStat(pkmn,eiv,stat,val){
-    var e = pkmn.stats[stat][eiv] + val;
-    if(e < 0){
-        pkmn.stats[stat][eiv] = e = 0;
-    }else{
-        switch(eiv){
-            case 'iv':
-                if(e > 31){
-                    pkmn.stats[stat][eiv] = e = 31;
-                }
-                break;
-            case 'ev':
-                if(e > 252){
-                    pkmn.stats[stat][eiv] = e = 252;
-                }
-                break;
-            default:
-                console.log("Something went wrong in updateStat", arguments);
-                return -1;
-        }
-    }
-    return e;
-}
-
-
-
 
 // Fucking Angular, never again
 var team = [];
@@ -96,14 +68,15 @@ function PokemonCtrl($scope,$http){
         $scope.pokemonNames.sort(function(a,b){
             if(a.name > b.name) return 1;
             return -1;
-        })
+        });
+        $scope.selectedPokemon = $scope.pokemonNames[0];
         $scope.pokemonData = data;
     }).error(function(data, status, headers, config) {
 
     });
     $scope.pokemonNames = [];
     $scope.pokemonData;
-    $scope.team = [];
+    $scope.currentTeam = [];
     $scope.evOptions = {horde : 1, pokerus : 1, baseEv : 1, powerItem : 0, stat : {}};
     $scope.evStats = [
         {name : 'Hp', id :'hp'},
@@ -142,9 +115,14 @@ function PokemonCtrl($scope,$http){
         {name : 'Serious', boost : '', hinder : '' },
         {name : 'Timid', boost : 'spe', hinder : 'atk'},
     ];
-    $scope.selectedPokemon = {}
+    $scope.selectedPokemon = {};
+    $scope.init = function(){
+        var e = ls.getItem('team');
+        if(e) $scope.currentTeam = JSON.parse(e);
+        console.log($scope.currentTeam);
+    }
     $scope.getPokemon = function(dex){
-        var pkmn = $scope.pokemonData[dex]
+        var pkmn = $scope.pokemonData[dex];
         var s = {
             hp : {name : 'Hp', evs : 0, ivs : 0, id : 'hp', total : 0},
             atk : {name : 'Attack', evs : 0, ivs : 0, id : 'atk', total : 0},
@@ -160,11 +138,11 @@ function PokemonCtrl($scope,$http){
             item : 'none',
             moves : [pkmn.moves[0],pkmn.moves[1],pkmn.moves[2],pkmn.moves[3]],
             ability : pkmn.abilities[0],
-            nature : $scope.natures[1],
+            nature : $scope.natures[0],
             horde : 1,
             pokerus : 1,
             power : 0,
-            id : $scope.team.length,
+            id : $scope.currentTeam.length,
             active : true
         }
         s.hp.total = $scope.calcStat(ret,'hp');
@@ -180,16 +158,14 @@ function PokemonCtrl($scope,$http){
         return pkmn.pokemon.baseStats[stat]
     }
     $scope.addPokemon = function(){
-        console.log($scope.selectedPokemon);
-        $scope.team.push($scope.getPokemon($scope.selectedPokemon.dex));
+        $scope.currentTeam.push($scope.getPokemon($scope.selectedPokemon.dex));
     }
     $scope.addEvs = function(){
         var pkmn = {};
         var statId = $scope.evOptions.stat.id;
         var total = $scope.calcEvs($scope.evOptions);
-        for(var i = 0; i < $scope.team.length; i++){
-            pkmn = $scope.team[i];
-            console.log(statId)
+        for(var i = 0; i < $scope.currentTeam.length; i++){
+            pkmn = $scope.currentTeam[i];
             pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + total;
             $scope.updateStat(pkmn,statId);
         }
@@ -224,7 +200,7 @@ function PokemonCtrl($scope,$http){
         var t = 0;
         var base = pkmn.pokemon.baseStats[statId];
         var ivs = pkmn.stats[statId].ivs;
-        var evs= pkmn.stats[statId].evs;
+        var evs = pkmn.stats[statId].evs;
         var nature = 1;
         if(pkmn.nature.boost == statId) nature = 1.1;
         else if(pkmn.hinder == statId) nature = .9;
@@ -239,30 +215,26 @@ function PokemonCtrl($scope,$http){
         }
     }
     $scope.updateTables = function(pkmn){
-        console.log("Running");
         $("#pokemon-tbody-"+pkmn.id).children().each(function(index,el){
             el = $(el);
             el.removeClass("boost hinder");
             if(pkmn.nature.boost != ''){
                 if(el.hasClass(pkmn.nature.boost+'-row')){
                     el.addClass('boost');
-                    console.log("Added Boost")
                 }else if(el.hasClass(pkmn.nature.hinder + '-row')){
                     el.addClass('hinder');
-                    console.log("Added Hinder");
                 }
             }
         });
     }
     $scope.save = function(){
-        ls.setItem('team', JSON.stringify($scope.team));
+        ls.setItem('team', JSON.stringify($scope.currentTeam));
     }
     $scope.load = function(){
         console.log(ls.getItem('team'));
     }
     $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
         var pkmn = ngRepeatFinishedEvent.targetScope.this.$parent.pokemon; // ok?
-        console.log($("#pokemon-tbody-"+pkmn.id));
         var tbod = $("#pokemon-tbody-"+pkmn.id);
         var rows = tbod.children();
         if(!rows.eq(0).hasClass('hp-row')){

@@ -12,14 +12,14 @@
   <link rel="stylesheet" href="css/vendor/bootstrap.min.css">
   <link rel="stylesheet" href="css/main.css">
 </head>
-<body ng-controller="PokemonCtrl">
+<body ng-controller="PokemonCtrl" data-ng-init="init()">
   <div class="container">
     <div class="navbar navbar-default" role="navigation">
       <div class="navbar-header"><a href="#" class="navbar-brand">EV Tracker</a></div>
     
       <ul class="nav navbar-nav">
         <li>
-          <select name="pokemon-names" ng-show="pokemonNames.length" ng-init="pokemonNames[0]" id="pokemon-names" class="form-control" ng-model="selectedPokemon" ng-options="n.name for n in pokemonNames">
+          <select name="pokemon-names" ng-show="pokemonNames.length" id="pokemon-names" class="form-control" ng-model="selectedPokemon" ng-options="n.name for n in pokemonNames">
           </select>
         </li>
         <li><a href="#" id="add-pokemon" ng-click="addPokemon()">Add Pokemon</a></li>
@@ -61,7 +61,7 @@
     </div><!-- End Row -->
 
     <div class="row" id="pokemon-row">
-      <div class="pokemon-display clearfix col-lg-12 " ng-repeat="pokemon in team">
+      <div class="pokemon-display clearfix col-lg-12 " ng-repeat="pokemon in currentTeam">
         <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 pokemon-ev-display-img"><img src="img/xerneas.jpg" alt="" class="img-responsive"></div>
           <div class="col-lg-2 col-md-2 col-sm-3 col-xs-8 pokemon-data">
             <h2 class="pokemon-name">{{pokemon.pokemon.name}}</h2>

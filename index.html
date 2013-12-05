@@ -18,6 +18,10 @@
       <div class="navbar-header"><a href="#" class="navbar-brand">EV Tracker</a></div>
     
       <ul class="nav navbar-nav">
+        <li>
+          <select name="pokemon-names" ng-show="pokemonNames.length" ng-init="pokemonNames[0]" id="pokemon-names" class="form-control" ng-model="selectedPokemon" ng-options="n.name for n in pokemonNames">
+          </select>
+        </li>
         <li><a href="#" id="add-pokemon" ng-click="addPokemon()">Add Pokemon</a></li>
       </ul>
 

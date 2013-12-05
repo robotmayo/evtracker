@@ -34,7 +34,18 @@ $.getJSON("data\\pokemon.json", function(json) {
 
 var version = "0.9"
 
-
+// From Modernizer
+function hasLocalStoarge(){
+    try {
+        localStorage.setItem("mod", "mod");
+        localStorage.removeItem("mod");
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+var ls = hasLocalStoarge() ? localStorage : undefined;
+console.log(ls);
 
 function updateStat(pkmn,eiv,stat,val){
     var e = pkmn.stats[stat][eiv] + val;
@@ -233,6 +244,12 @@ function PokemonCtrl($scope){
                 }
             }
         });
+    }
+    $scope.save = function(){
+        ls.setItem('team', JSON.stringify($scope.team));
+    }
+    $scope.load = function(){
+        console.log(ls.getItem('team'));
     }
     $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
         var pkmn = ngRepeatFinishedEvent.targetScope.this.$parent.pokemon; // ok?

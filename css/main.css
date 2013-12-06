@@ -92,6 +92,13 @@ tr.hinder{
 .active-false{
 	color: rgb(100,198,247);
 }
+.single-options{
+
+}
+.ev-stat{
+	display: inline;
+	max-width: 200px;
+}
 @media (max-width: 991px) {
 	.pokemon-stats{
 		clear: both;

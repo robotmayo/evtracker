@@ -46,9 +46,9 @@
                 </select>
               </div><!-- End Col -->
               <div style="clear:both" class="hidden-lg hidden-sm hidden-md"></div>
-                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4"><label for="btn-power-item" class="hidden-xs" >Power Item</label><button name="btn-power-item" class="btn" id="btn-power-item" ng-click="toggleEvOption($event)">Power Item</button></div>
-                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4"><label for="btn-horde" class="hidden-xs">Horde</label><button name="btn-horde" class="btn" id="btn-horde" ng-click="toggleEvOption($event)">Horde Battle</button></div>
-                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4"><label for="btn-pokerus" class="hidden-xs" >Pokerus</label><button name="btn-pokerus" class="btn" id="btn-pokerus" ng-click="toggleEvOption($event)">Pokerus</button>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4"><label for="btn-power-item-main" class="hidden-xs" >Power Item</label><button name="btn-power-item-main" class="btn btn-power-item" ng-click="toggleEvOption($event)">Power Item</button></div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4"><label for="btn-horde-main" class="hidden-xs">Horde</label><button name="btn-horde-main" class="btn btn-horde" ng-click="toggleEvOption($event)">Horde Battle</button></div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4"><label for="btn-pokerus-main" class="hidden-xs" >Pokerus</label><button name="btn-pokerus-main" class="btn btn-pokerus" ng-click="toggleEvOption($event)">Pokerus</button>
               </div>
             </div><!-- End Col -->
           </div><!-- End Row -->
@@ -136,9 +136,12 @@
             </table>
           </div>
           <div class="single-options col-lg-12">
-            <input type="text">
-          </div>
-    </div>
+              <select class="ev-stat form-control" ng-init="pokemon.evOptions.stat = evStats[0]" ng-model="pokemon.evOptions.stat" ng-options="s.name for s in evStats"></select>
+              <button name="btn-power-item" class="btn btn-power-item" ng-click="toggleEvOption($event,pokemon)">Power Item</button>
+              <button name="btn-horde" class="btn btn-horde" ng-click="toggleEvOption($event,pokemon)">Horde Battle</button>
+              <button name="btn-pokerus" class="btn btn-pokerus" ng-click="toggleEvOption($event,pokemon)">Pokerus</button>
+              <button class="btn btn-primary add-evs" ng-click="addEvs(pokemon)">Add {{pokemon.evOptions.total}} Evs</button>
+        </div>
       
     </div>
 

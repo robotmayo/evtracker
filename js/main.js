@@ -60,7 +60,7 @@ app.directive('onFinishRender', function ($timeout) {
     }
 });
 
-function PokemonCtrl($scope,$http){
+function PokemonCtrl($scope,$http,$interval){
     $http({method: 'GET', url: 'data\\pokemon.json'}).success(function(data, status, headers, config) {
         for(var i = 0; i < data.length; i++){
             $scope.pokemonNames.push({name : data[i].name, dex : i});
@@ -74,6 +74,7 @@ function PokemonCtrl($scope,$http){
     }).error(function(data, status, headers, config) {
 
     });
+    
     $scope.pokemonNames = [];
     $scope.pokemonData;
     $scope.currentTeam = [];
@@ -116,10 +117,12 @@ function PokemonCtrl($scope,$http){
         {name : 'Timid', boost : 'spe', hinder : 'atk'},
     ];
     $scope.selectedPokemon = {};
+    $scope.totalEvs = 1;
     $scope.init = function(){
         var e = ls.getItem('team');
         if(e) $scope.currentTeam = JSON.parse(e);
-        console.log($scope.currentTeam);
+        console.log($scope.currentTeam[0].nature)
+        ls.removeItem('team');
     }
     $scope.getPokemon = function(dex){
         var pkmn = $scope.pokemonData[dex];
@@ -143,7 +146,8 @@ function PokemonCtrl($scope,$http){
             pokerus : 1,
             power : 0,
             id : $scope.currentTeam.length,
-            active : true
+            active : true,
+            totalEvs : 510
         }
         s.hp.total = $scope.calcStat(ret,'hp');
         s.atk.total = $scope.calcStat(ret,'atk');
@@ -163,11 +167,28 @@ function PokemonCtrl($scope,$http){
     $scope.addEvs = function(){
         var pkmn = {};
         var statId = $scope.evOptions.stat.id;
-        var total = $scope.calcEvs($scope.evOptions);
+        var toAdd = 0;
+        var oldEvs = 0;
+        var toAdd = 0;
+        var left = 0;
         for(var i = 0; i < $scope.currentTeam.length; i++){
             pkmn = $scope.currentTeam[i];
-            pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + total;
-            $scope.updateStat(pkmn,statId);
+            if(pkmn.active == true){
+                toAdd = $scope.calcEvs($scope.evOptions);
+                oldEvs = parseInt(pkmn.stats[statId].evs,10);
+                left = 252 - oldEvs;
+                if(left < toAdd){
+                    toAdd = left;
+                }
+                if(toAdd >= pkmn.totalEvs){
+                    toAdd = pkmn.totalEvs;
+                }
+                pkmn.totalEvs -= toAdd;
+                console.log(pkmn.totalEvs);
+                pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + toAdd;
+                $scope.updateStat(pkmn,statId);
+                if(pkmn.totalEvs == 0) pkmn.active = false;
+            }
         }
     }
     $scope.updateStat = function(pkmn,statId){
@@ -182,8 +203,11 @@ function PokemonCtrl($scope,$http){
         }else if(pkmn.stats[statId].ivs > 31) pkmn.stats[statId].ivs = 31;
         pkmn.stats[statId].total = $scope.calcStat(pkmn,statId);
     }
+    $scope.calcTotal = function(pkmn){
+        return pkmn.stats.hp.evs + pkmn.stats.atk.evs + pkmn.stats.def.evs + pkmn.stats.spa.evs + pkmn.stats.spd.evs + pkmn.stats.spe.evs;
+    }
     $scope.calcEvs = function(evo){
-        return (evo.baseEv + evo.powerItem) * evo.horde * evo.pokerus;
+        return $scope.totalEvs = (evo.baseEv + evo.powerItem) * evo.horde * evo.pokerus;
     }
     $scope.toggleEvOption = function(evt){
         var el = $(evt.target);
@@ -195,6 +219,7 @@ function PokemonCtrl($scope,$http){
         }else if(el.is("#btn-power-item")){
             $scope.evOptions.powerItem = $scope.evOptions.powerItem == 4 ? 0 : 4;
         }
+        $scope.calcEvs($scope.evOptions);
     }
     $scope.calcStat = function(pkmn,statId){
         var t = 0;
@@ -229,10 +254,12 @@ function PokemonCtrl($scope,$http){
     }
     $scope.save = function(){
         ls.setItem('team', JSON.stringify($scope.currentTeam));
+        console.log("Saving");
     }
     $scope.load = function(){
         console.log(ls.getItem('team'));
     }
+    //$interval($scope.save,1000*5);
     $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
         var pkmn = ngRepeatFinishedEvent.targetScope.this.$parent.pokemon; // ok?
         var tbod = $("#pokemon-tbody-"+pkmn.id);

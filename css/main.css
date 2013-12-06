@@ -49,6 +49,7 @@ h1{
 }
 .pokemon-name{
 	margin-top: 0px;
+	cursor: pointer;
 }
 .pokemon-nickname{
 	margin-bottom: 0px;
@@ -85,7 +86,12 @@ tr.hinder{
 	width: 150px;
 	margin-top: 7px;
 }
-
+.active-true{
+	color: rgb(255,116,98);
+}
+.active-false{
+	color: rgb(100,198,247);
+}
 @media (max-width: 991px) {
 	.pokemon-stats{
 		clear: both;

@@ -37,7 +37,7 @@
             <div class="col-lg-12">
               <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
                 <label for="base-ev">Base Ev</label>
-                <select name="base-ev" id="base-ev" class="form-control" ng-init="evOptions.baseEv = 1" ng-model="evOptions.baseEv" ng-options="v for v in baseEvO">
+                <select name="base-ev" ng-change="calcEvs(evOptions)" id="base-ev" class="form-control" ng-init="evOptions.baseEv = 1" ng-model="evOptions.baseEv" ng-options="v for v in baseEvO">
                 </select>
               </div><!-- End Col -->
               <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8">
@@ -57,14 +57,14 @@
     </div><!-- End Row -->
 
     <div class="row">
-      <div class="col-lg-12"><button class="btn btn-lg btn-primary btn-block" id="add-evs" ng-click="addEvs()">Add Evs</button></div>
+      <div class="col-lg-12"><button class="btn btn-lg btn-primary" id="add-evs" ng-click="addEvs()">Add {{totalEvs}} Evs</button></div>
     </div><!-- End Row -->
 
     <div class="row" id="pokemon-row">
       <div class="pokemon-display clearfix col-lg-12 " ng-repeat="pokemon in currentTeam">
         <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 pokemon-ev-display-img"><img src="img/xerneas.jpg" alt="" class="img-responsive"></div>
           <div class="col-lg-2 col-md-2 col-sm-3 col-xs-8 pokemon-data">
-            <h2 class="pokemon-name">{{pokemon.pokemon.name}}</h2>
+            <h2 class="pokemon-name active-{{pokemon.active}}">{{pokemon.pokemon.name}}</h2>
             <div class="div types"><span class="type fairy">Fairy</span></div>
             <label for="ability-{{id}}">Ability</label>
             <select name="ability-{{id}}" class="form-control" ng-model="pokemon.ability" ng-options="a for a in pokemon.pokemon.abilities">
@@ -128,12 +128,15 @@
                   <tr ng-repeat="stat in pokemon.stats" on-finish-render="ngRepeatFinished" class="{{stat.id}}-row">
                     <td>{{stat.name}}</td>
                     <td>{{getBaseStat(pokemon,stat.id)}}</td>
-                    <td><input type="text" maxlength="3" value="{{stat.evs}}" ng-model="stat.evs" ng-change="updateStat(pokemon,stat.id)"></td>
-                    <td><input type="text" maxlength="2" value="{{stat.ivs}}" ng-model="stat.ivs" ng-change="updateStat(pokemon,stat.id)"></td>
+                    <td>{{stat.evs}}</td>
+                    <td>{{stat.ivs}}</td>
                     <td>{{stat.total}}</td>
                   </tr>
               </tbody>
             </table>
+          </div>
+          <div class="single-options col-lg-12">
+            <input type="text">
           </div>
     </div>
       

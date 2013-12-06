@@ -147,7 +147,8 @@ function PokemonCtrl($scope,$http,$interval){
             power : 0,
             id : $scope.currentTeam.length,
             active : true,
-            totalEvs : 510
+            totalEvs : 510,
+            evOptions : {horde : 1, pokerus : 1, baseEv : 1, powerItem : 0, stat : {},total : 1}
         }
         s.hp.total = $scope.calcStat(ret,'hp');
         s.atk.total = $scope.calcStat(ret,'atk');
@@ -164,32 +165,54 @@ function PokemonCtrl($scope,$http,$interval){
     $scope.addPokemon = function(){
         $scope.currentTeam.push($scope.getPokemon($scope.selectedPokemon.dex));
     }
-    $scope.addEvs = function(){
+    $scope.addEvs = function(pokemon){
         var pkmn = {};
         var statId = $scope.evOptions.stat.id;
         var toAdd = 0;
         var oldEvs = 0;
         var toAdd = 0;
         var left = 0;
-        for(var i = 0; i < $scope.currentTeam.length; i++){
-            pkmn = $scope.currentTeam[i];
-            if(pkmn.active == true){
-                toAdd = $scope.calcEvs($scope.evOptions);
-                oldEvs = parseInt(pkmn.stats[statId].evs,10);
-                left = 252 - oldEvs;
-                if(left < toAdd){
-                    toAdd = left;
+        if(pokemon != undefined && pokemon.pokemon != undefined){
+            if(pokemon.active == false) return;
+            //@TODO: Should probably put this in a function
+            pkmn = pokemon;
+            statId = pkmn.evOptions.stat.id;
+            toAdd = $scope.calcEvs(pokemon.evOptions);
+            oldEvs = parseInt(pkmn.stats[statId].evs,10);
+            left = 252 - oldEvs;
+            if(left < toAdd){
+                toAdd = left;
+            }
+            if(toAdd >= pkmn.totalEvs){
+                toAdd = pkmn.totalEvs;
+            }
+            pkmn.totalEvs -= toAdd;
+            pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + toAdd;
+            $scope.updateStat(pkmn,statId);
+            if(pkmn.totalEvs == 0) pkmn.active = false;
+        }else{
+            for(var i = 0; i < $scope.currentTeam.length; i++){
+                pkmn = $scope.currentTeam[i];
+                if(pkmn.active == true){
+                    toAdd = $scope.calcEvs($scope.evOptions);
+                    oldEvs = parseInt(pkmn.stats[statId].evs,10);
+                    left = 252 - oldEvs;
+                    if(left < toAdd){
+                        toAdd = left;
+                    }
+                    if(toAdd >= pkmn.totalEvs){
+                        toAdd = pkmn.totalEvs;
+                    }
+                    pkmn.totalEvs -= toAdd;
+                    console.log(pkmn.totalEvs);
+                    pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + toAdd;
+                    $scope.updateStat(pkmn,statId);
+                    if(pkmn.totalEvs == 0) pkmn.active = false;
                 }
-                if(toAdd >= pkmn.totalEvs){
-                    toAdd = pkmn.totalEvs;
-                }
-                pkmn.totalEvs -= toAdd;
-                console.log(pkmn.totalEvs);
-                pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + toAdd;
-                $scope.updateStat(pkmn,statId);
-                if(pkmn.totalEvs == 0) pkmn.active = false;
             }
         }
+        
+        
     }
     $scope.updateStat = function(pkmn,statId){
         pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10);
@@ -207,19 +230,23 @@ function PokemonCtrl($scope,$http,$interval){
         return pkmn.stats.hp.evs + pkmn.stats.atk.evs + pkmn.stats.def.evs + pkmn.stats.spa.evs + pkmn.stats.spd.evs + pkmn.stats.spe.evs;
     }
     $scope.calcEvs = function(evo){
-        return $scope.totalEvs = (evo.baseEv + evo.powerItem) * evo.horde * evo.pokerus;
+        return (evo.baseEv + evo.powerItem) * evo.horde * evo.pokerus;
     }
-    $scope.toggleEvOption = function(evt){
+    $scope.toggleEvOption = function(evt,pokemon){
         var el = $(evt.target);
         el.toggleClass('active');
-        if(el.is("#btn-horde")){
-            $scope.evOptions.horde = $scope.evOptions.horde == 5 ? 0 : 5;
-        }else if(el.is("#btn-pokerus")){
-            $scope.evOptions.pokerus = $scope.evOptions.pokerus == 2 ? 0 : 2;
-        }else if(el.is("#btn-power-item")){
-            $scope.evOptions.powerItem = $scope.evOptions.powerItem == 4 ? 0 : 4;
+        if(el.hasClass("btn-horde")){
+            if(pokemon == undefined) $scope.evOptions.horde = $scope.evOptions.horde == 5 ? 0 : 5;
+            else pokemon.evOptions.horde = pokemon.evOptions.horde == 5 ? 0 : 5
+        }else if(el.hasClass("btn-pokerus")){
+            if(pokemon == undefined) $scope.evOptions.pokerus = $scope.evOptions.pokerus == 2 ? 0 : 2;
+            else pokemon.evOptions.pokerus = pokemon.evOptions.pokerus == 2 ? 0 : 2;
+        }else if(el.hasClass("btn-power-item")){
+            if(pokemon == undefined) $scope.evOptions.powerItem = $scope.evOptions.powerItem == 4 ? 0 : 4;
+            else pokemon.evOptions.powerItem = pokemon.evOptions.powerItem == 4 ? 0 : 4;
         }
-        $scope.calcEvs($scope.evOptions);
+        if(pokemon == undefined) $scope.totalEvs = $scope.calcEvs($scope.evOptions);
+        else pokemon.evOptions.total = $scope.calcEvs(pokemon.evOptions);
     }
     $scope.calcStat = function(pkmn,statId){
         var t = 0;

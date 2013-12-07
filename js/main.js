@@ -286,6 +286,9 @@ function PokemonCtrl($scope,$http,$interval){
     $scope.load = function(){
         console.log(ls.getItem('team'));
     }
+    $scope.removePokemon = function(poke){
+
+    }
     //$interval($scope.save,1000*5);
     $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
         var pkmn = ngRepeatFinishedEvent.targetScope.this.$parent.pokemon; // ok?

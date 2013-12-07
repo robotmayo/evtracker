@@ -136,6 +136,7 @@
             </table>
           </div>
           <div class="single-options col-lg-12">
+              <button class="btn btn-danger glyphicon glyphicon-remove" bg-click="removePokemon(pokemon)"></button>
               <select ng-change="pokemon.evOptions.total = calcEvs(pokemon.evOptions)"  class="base-ev form-control" ng-init="pokemon.evOptions.baseEv = 1" ng-model="pokemon.evOptions.baseEv" ng-options="v for v in baseEvO"> </select>
               <select class="ev-stat form-control" ng-init="pokemon.evOptions.stat = evStats[0]" ng-model="pokemon.evOptions.stat" ng-options="s.name for s in evStats"></select>
               <button name="btn-power-item" class="btn btn-power-item" ng-click="toggleEvOption($event,pokemon)">Power Item</button>
@@ -152,6 +153,7 @@
   <script src="js/vendor/lava.js"></script>
   <script src="js/vendor/angular/angular.js"></script>
   <script src="js/vendor/bootstrap.min.js"></script>
+  <script src="js/linkedlist.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

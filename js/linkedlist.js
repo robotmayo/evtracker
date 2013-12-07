@@ -32,6 +32,19 @@ LinkedList = function(array){
     _ll.remove = function(index){
         var current = _first
         var val;
+        if(!isNaN(index)){
+            var count = _ll.size();
+            while(count--){
+                val = current;
+                if(val.value === index){
+                    current.prev.next = current.next;
+                    current.next.prev = current.prev;
+                    return val;
+                }
+                current = current.next;
+            }
+            return val;
+        }
         if(index === 0){
             _size--;
             return this.shift();

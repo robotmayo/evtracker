@@ -144,7 +144,7 @@ function PokemonCtrl($scope,$http,$interval){
             horde : 1,
             pokerus : 1,
             power : 0,
-            id : $scope.currentTeam.length,
+            id : $scope.currentTeam.size(),
             active : true,
             totalEvs : 510,
             evOptions : {horde : 1, pokerus : 1, baseEv : 1, powerItem : 0, stat : {},total : 1}
@@ -252,6 +252,7 @@ function PokemonCtrl($scope,$http,$interval){
         }
     }
     $scope.updateTables = function(pkmn){
+        console.log(pkmn);
         $("#pokemon-tbody-"+pkmn.id).children().each(function(index,el){
             el = $(el);
             el.removeClass("boost hinder");

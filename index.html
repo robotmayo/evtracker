@@ -61,7 +61,7 @@
     </div><!-- End Row -->
 
     <div class="row" id="pokemon-row">
-      <div class="pokemon-display clearfix col-lg-12 " ng-repeat="pokemon in currentTeam">
+      <div class="pokemon-display clearfix col-lg-12 " ng-repeat="pokemon in currentTeam.toArray()">
         <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 pokemon-ev-display-img"><img src="img/xerneas.jpg" alt="" class="img-responsive"></div>
           <div class="col-lg-2 col-md-2 col-sm-3 col-xs-8 pokemon-data">
             <h2 class="pokemon-name active-{{pokemon.active}}">{{pokemon.pokemon.name}}</h2>

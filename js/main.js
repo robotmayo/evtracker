@@ -26,7 +26,7 @@ var displayStates = {
 var pokemonData = []
 
 
-var version = "0.9"
+var version = "0.9";
 
 // From Modernizer
 function hasLocalStoarge(){
@@ -77,7 +77,7 @@ function PokemonCtrl($scope,$http,$interval){
     
     $scope.pokemonNames = [];
     $scope.pokemonData;
-    $scope.currentTeam = [];
+    $scope.currentTeam = LinkedList();
     $scope.evOptions = {horde : 1, pokerus : 1, baseEv : 1, powerItem : 0, stat : {}};
     $scope.evStats = [
         {name : 'Hp', id :'hp'},
@@ -119,10 +119,9 @@ function PokemonCtrl($scope,$http,$interval){
     $scope.selectedPokemon = {};
     $scope.totalEvs = 1;
     $scope.init = function(){
-        var e = ls.getItem('team');
-        if(e) $scope.currentTeam = JSON.parse(e);
-        console.log($scope.currentTeam[0].nature)
-        ls.removeItem('team');
+        //var e = ls.getItem('team');
+        //if(e) $scope.currentTeam = JSON.parse(e);
+        //ls.removeItem('team');
     }
     $scope.getPokemon = function(dex){
         var pkmn = $scope.pokemonData[dex];
@@ -166,12 +165,6 @@ function PokemonCtrl($scope,$http,$interval){
         $scope.currentTeam.push($scope.getPokemon($scope.selectedPokemon.dex));
     }
     $scope.addEvs = function(pokemon){
-        var pkmn = {};
-        var statId = $scope.evOptions.stat.id;
-        var toAdd = 0;
-        var oldEvs = 0;
-        var toAdd = 0;
-        var left = 0;
         if(pokemon != undefined && pokemon.pokemon != undefined){
             if(pokemon.active == false) return;
             //@TODO: Should probably put this in a function
@@ -191,28 +184,34 @@ function PokemonCtrl($scope,$http,$interval){
             $scope.updateStat(pkmn,statId);
             if(pkmn.totalEvs == 0) pkmn.active = false;
         }else{
-            for(var i = 0; i < $scope.currentTeam.length; i++){
-                pkmn = $scope.currentTeam[i];
-                if(pkmn.active == true){
-                    toAdd = $scope.calcEvs($scope.evOptions);
-                    oldEvs = parseInt(pkmn.stats[statId].evs,10);
-                    left = 252 - oldEvs;
-                    if(left < toAdd){
-                        toAdd = left;
-                    }
-                    if(toAdd >= pkmn.totalEvs){
-                        toAdd = pkmn.totalEvs;
-                    }
-                    pkmn.totalEvs -= toAdd;
-                    console.log(pkmn.totalEvs);
-                    pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + toAdd;
-                    $scope.updateStat(pkmn,statId);
-                    if(pkmn.totalEvs == 0) pkmn.active = false;
-                }
+            var p = $scope.currentTeam.getFirst();
+            while(p != undefined){
+                $scope.updateEvs(p.value);
+                p = p.next;
             }
         }
-        
-        
+    }
+    $scope.updateEvs = function(pkmn,statId){
+        if(statId == undefined) statId = pkmn.evOptions.stat.id;
+        var toAdd = 0;
+        var oldEvs = 0;
+        var toAdd = 0;
+        var left = 0;
+        if(pkmn.active == false) return;
+        toAdd = $scope.calcEvs($scope.evOptions);
+        oldEvs = parseInt(pkmn.stats[statId].evs,10);
+        left = 252 - oldEvs;
+        if(left < toAdd){
+            toAdd = left;
+        }
+        if(toAdd >= pkmn.totalEvs){
+            toAdd = pkmn.totalEvs;
+        }
+        pkmn.totalEvs -= toAdd;
+        console.log(pkmn.totalEvs);
+        pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + toAdd;
+        $scope.updateStat(pkmn,statId);
+        if(pkmn.totalEvs == 0) pkmn.active = false;
     }
     $scope.updateStat = function(pkmn,statId){
         pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10);

@@ -93,7 +93,7 @@ tr.hinder{
 	color: rgb(100,198,247);
 }
 .single-options{
-
+	overflow: auto;
 }
 .ev-stat{
 	display: inline;

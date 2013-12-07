@@ -167,26 +167,12 @@ function PokemonCtrl($scope,$http,$interval){
     $scope.addEvs = function(pokemon){
         if(pokemon != undefined && pokemon.pokemon != undefined){
             if(pokemon.active == false) return;
-            //@TODO: Should probably put this in a function
-            pkmn = pokemon;
-            statId = pkmn.evOptions.stat.id;
-            toAdd = $scope.calcEvs(pokemon.evOptions);
-            oldEvs = parseInt(pkmn.stats[statId].evs,10);
-            left = 252 - oldEvs;
-            if(left < toAdd){
-                toAdd = left;
-            }
-            if(toAdd >= pkmn.totalEvs){
-                toAdd = pkmn.totalEvs;
-            }
-            pkmn.totalEvs -= toAdd;
-            pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + toAdd;
-            $scope.updateStat(pkmn,statId);
-            if(pkmn.totalEvs == 0) pkmn.active = false;
+            $scope.updateEvs(pokemon);
         }else{
+            var sid = $scope.evOptions.stat.id;
             var p = $scope.currentTeam.getFirst();
             while(p != undefined){
-                $scope.updateEvs(p.value);
+                $scope.updateEvs(p.value,sid);
                 p = p.next;
             }
         }

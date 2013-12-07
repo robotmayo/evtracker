@@ -95,7 +95,7 @@ tr.hinder{
 .single-options{
 	overflow: auto;
 }
-.ev-stat{
+.ev-stat, .base-ev{
 	display: inline;
 	max-width: 200px;
 }

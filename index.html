@@ -136,6 +136,7 @@
             </table>
           </div>
           <div class="single-options col-lg-12">
+              <select ng-change="pokemon.evOptions.total = calcEvs(pokemon.evOptions)"  class="base-ev form-control" ng-init="pokemon.evOptions.baseEv = 1" ng-model="pokemon.evOptions.baseEv" ng-options="v for v in baseEvO"> </select>
               <select class="ev-stat form-control" ng-init="pokemon.evOptions.stat = evStats[0]" ng-model="pokemon.evOptions.stat" ng-options="s.name for s in evStats"></select>
               <button name="btn-power-item" class="btn btn-power-item" ng-click="toggleEvOption($event,pokemon)">Power Item</button>
               <button name="btn-horde" class="btn btn-horde" ng-click="toggleEvOption($event,pokemon)">Horde Battle</button>

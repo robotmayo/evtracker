@@ -32,19 +32,6 @@ LinkedList = function(array){
     _ll.remove = function(index){
         var current = _first
         var val;
-        if(!isNaN(index)){
-            var count = _ll.size();
-            while(count--){
-                val = current;
-                if(val.value === index){
-                    current.prev.next = current.next;
-                    current.next.prev = current.prev;
-                    return val;
-                }
-                current = current.next;
-            }
-            return val;
-        }
         if(index === 0){
             _size--;
             return this.shift();
@@ -61,6 +48,24 @@ LinkedList = function(array){
         current.next.prev = current.prev;
         return val;
     };
+    _ll.removeItem = function(item){
+        var current = _first;
+        var count = 0;
+        while(current != undefined){
+            val = current;
+            if(current.value === item){
+                if(count === 0) return this.shift();
+                if(count === this.size()) return this.pop();
+                console.log("Found");
+                current.prev.next = current.next;
+                current.next.prev = current.prev;
+                return val;
+            }
+            current = current.next;
+            count++;
+        }
+        console.log("Cant find");
+    }
 
     _ll.get = function(index){
         var current;

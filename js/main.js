@@ -144,7 +144,6 @@ function PokemonCtrl($scope,$http,$interval){
             horde : 1,
             pokerus : 1,
             power : 0,
-            id : $scope.currentTeam.size(),
             active : true,
             totalEvs : 510,
             evOptions : {horde : 1, pokerus : 1, baseEv : 1, powerItem : 0, stat : {},total : 1}
@@ -163,6 +162,7 @@ function PokemonCtrl($scope,$http,$interval){
     }
     $scope.addPokemon = function(){
         $scope.currentTeam.push($scope.getPokemon($scope.selectedPokemon.dex));
+        console.log($scope.currentTeam.getFirst());
     }
     $scope.addEvs = function(pokemon){
         if(pokemon != undefined && pokemon.pokemon != undefined){
@@ -178,13 +178,18 @@ function PokemonCtrl($scope,$http,$interval){
         }
     }
     $scope.updateEvs = function(pkmn,statId){
-        if(statId == undefined) statId = pkmn.evOptions.stat.id;
         var toAdd = 0;
         var oldEvs = 0;
         var toAdd = 0;
         var left = 0;
         if(pkmn.active == false) return;
-        toAdd = $scope.calcEvs($scope.evOptions);
+        if(statId == undefined){
+            statId = pkmn.evOptions.stat.id;
+            toAdd = $scope.calcEvs(pkmn.evOptions);
+        }else{
+            toAdd = $scope.calcEvs($scope.evOptions);
+        }
+        
         oldEvs = parseInt(pkmn.stats[statId].evs,10);
         left = 252 - oldEvs;
         if(left < toAdd){
@@ -251,9 +256,9 @@ function PokemonCtrl($scope,$http,$interval){
             return Math.floor(t * nature);
         }
     }
-    $scope.updateTables = function(pkmn){
-        console.log(pkmn);
-        $("#pokemon-tbody-"+pkmn.id).children().each(function(index,el){
+    $scope.updateTables = function(pkmn,index){
+        console.log(index);
+        $("#pokemon-tbody-"+index).children().each(function(index,el){
             el = $(el);
             el.removeClass("boost hinder");
             if(pkmn.nature.boost != ''){
@@ -277,6 +282,8 @@ function PokemonCtrl($scope,$http,$interval){
     }
     //$interval($scope.save,1000*5);
     $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+        console.log(arguments);
+        return;
         var pkmn = ngRepeatFinishedEvent.targetScope.this.$parent.pokemon; // ok?
         var tbod = $("#pokemon-tbody-"+pkmn.id);
         var rows = tbod.children();

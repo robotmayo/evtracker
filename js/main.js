@@ -118,6 +118,7 @@ function PokemonCtrl($scope,$http,$interval){
     ];
     $scope.selectedPokemon = {};
     $scope.totalEvs = 1;
+    $scope.currentTeamArray = [];
     $scope.init = function(){
         //var e = ls.getItem('team');
         //if(e) $scope.currentTeam = JSON.parse(e);
@@ -162,7 +163,7 @@ function PokemonCtrl($scope,$http,$interval){
     }
     $scope.addPokemon = function(){
         $scope.currentTeam.push($scope.getPokemon($scope.selectedPokemon.dex));
-        console.log($scope.currentTeam.getFirst());
+        $scope.currentTeamArray = $scope.currentTeam.toArray();
     }
     $scope.addEvs = function(pokemon){
         if(pokemon != undefined && pokemon.pokemon != undefined){
@@ -199,7 +200,6 @@ function PokemonCtrl($scope,$http,$interval){
             toAdd = pkmn.totalEvs;
         }
         pkmn.totalEvs -= toAdd;
-        console.log(pkmn.totalEvs);
         pkmn.stats[statId].evs = parseInt(pkmn.stats[statId].evs,10) + toAdd;
         $scope.updateStat(pkmn,statId);
         if(pkmn.totalEvs == 0) pkmn.active = false;
@@ -257,7 +257,6 @@ function PokemonCtrl($scope,$http,$interval){
         }
     }
     $scope.updateTables = function(pkmn,index){
-        console.log(index);
         $("#pokemon-tbody-"+index).children().each(function(index,el){
             el = $(el);
             el.removeClass("boost hinder");
@@ -277,12 +276,13 @@ function PokemonCtrl($scope,$http,$interval){
     $scope.load = function(){
         console.log(ls.getItem('team'));
     }
-    $scope.removePokemon = function(poke){
-
+    $scope.removePokemon = function(pkmn){
+        console.log(pkmn);
+        console.log($scope.currentTeam.removeItem(pkmn));
+        console.log($scope.currentTeamArray = $scope.currentTeam.toArray());
     }
     //$interval($scope.save,1000*5);
     $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
-        console.log(arguments);
         return;
         var pkmn = ngRepeatFinishedEvent.targetScope.this.$parent.pokemon; // ok?
         var tbod = $("#pokemon-tbody-"+pkmn.id);

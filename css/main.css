@@ -56,14 +56,25 @@ h1{
 	margin-top: 0;
 }
 .type{
-	height : 60px;
 	border-radius: 4px;
 	border : 2px solid rgba(0,0,0,.2);
-	padding : 3px;
+	padding : 5px;
+	width: 55px;
+	display: inline-block;
+	text-align: center;
+}
+.type:first-child{
+	margin-right: 5px;
 }
 
 .fairy{
 	background: pink;
+}
+.ice{
+	background: lightblue;
+}
+.grass{
+	background: lightgreen;
 }
 .pokemon-stats input{
 	max-width: 40px;
@@ -98,6 +109,9 @@ tr.hinder{
 .ev-stat, .base-ev{
 	display: inline;
 	max-width: 200px;
+}
+.table > thead > tr > th{
+	padding-top: 0;
 }
 @media (max-width: 991px) {
 	.pokemon-stats{

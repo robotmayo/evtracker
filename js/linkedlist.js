@@ -99,6 +99,15 @@ LinkedList = function(array){
         }
         return ret;
     }
+    _ll.each = function(f){
+        var current = _first;
+        var index = 0;
+        while(current != undefined){
+            f.call(this,current,index);
+            current = current.next;
+            index++;
+        }
+    }
     var Node = function(val){
         this.value = val;
         var next = {};

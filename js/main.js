@@ -78,7 +78,7 @@ function PokemonCtrl($scope,$http,$interval){
     $scope.pokemonNames = [];
     $scope.pokemonData;
     $scope.currentTeam = LinkedList();
-    $scope.evOptions = {horde : 1, pokerus : 1, baseEv : 1, powerItem : 0, stat : {}};
+    $scope.evOptions = {horde : 1, pokerus : 1, baseEv : 1, powerItem : 0, stat : {}, total : 1};
     $scope.evStats = [
         {name : 'Hp', id :'hp'},
         {name : 'Attack', id :'atk'},
@@ -120,9 +120,22 @@ function PokemonCtrl($scope,$http,$interval){
     $scope.totalEvs = 1;
     $scope.currentTeamArray = [];
     $scope.init = function(){
-        //var e = ls.getItem('team');
-        //if(e) $scope.currentTeam = JSON.parse(e);
-        //ls.removeItem('team');
+        var e = $scope.load();
+        if(e){
+            console.log("Loaded");
+            if(e == "[]") return;
+            $scope.currentTeam = LinkedList(JSON.parse(e));
+            $scope.currentTeam.each( function (item,index){
+                item.value.evOptions = $scope.getEvOptions();
+                console.log(item.value.nature)
+            });
+            $scope.currentTeamArray = $scope.currentTeam.toArray();
+        }else{
+            console.log("Failed To Load");
+        }
+    }
+    $scope.getEvOptions = function(){
+        return {horde : 1, pokerus : 1, baseEv : 1, powerItem : 0, stat : {}, total : 1};
     }
     $scope.getPokemon = function(dex){
         var pkmn = $scope.pokemonData[dex];
@@ -136,7 +149,7 @@ function PokemonCtrl($scope,$http,$interval){
             };
         var ret = {
             pokemon : pkmn,
-            nickname : "Bob Barker",
+            nickname : pkmn.name,
             stats : s,
             item : 'none',
             moves : [pkmn.moves[0],pkmn.moves[1],pkmn.moves[2],pkmn.moves[3]],
@@ -157,6 +170,9 @@ function PokemonCtrl($scope,$http,$interval){
         s.spe.total = $scope.calcStat(ret,'spe');
         return ret;
             
+    }
+    $scope.updateName = function(){
+        console.log("Works");
     }
     $scope.getBaseStat = function(pkmn,stat){
         return pkmn.pokemon.baseStats[stat]
@@ -220,7 +236,7 @@ function PokemonCtrl($scope,$http,$interval){
         return pkmn.stats.hp.evs + pkmn.stats.atk.evs + pkmn.stats.def.evs + pkmn.stats.spa.evs + pkmn.stats.spd.evs + pkmn.stats.spe.evs;
     }
     $scope.calcEvs = function(evo){
-        return (evo.baseEv + evo.powerItem) * evo.horde * evo.pokerus;
+        return evo.total = (evo.baseEv + evo.powerItem) * evo.horde * evo.pokerus;
     }
     $scope.toggleEvOption = function(evt,pokemon){
         var el = $(evt.target);
@@ -270,11 +286,12 @@ function PokemonCtrl($scope,$http,$interval){
         });
     }
     $scope.save = function(){
-        ls.setItem('team', JSON.stringify($scope.currentTeam));
+        ls.setItem('currentTeam', JSON.stringify($scope.currentTeam.toArray()));
         console.log("Saving");
     }
     $scope.load = function(){
-        console.log(ls.getItem('team'));
+        var ret = ls.getItem('currentTeam');
+        return ret;
     }
     $scope.removePokemon = function(pkmn){
         console.log(pkmn);
